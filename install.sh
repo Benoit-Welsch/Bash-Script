@@ -164,7 +164,7 @@ function installJellyFin(){
     -e PUID=1000 \
     -e PGID=1000 \
     -e TZ=Europe/Brussels \
-    -e JELLYFIN_PublishedServerUrl=19$localIp \
+    -e JELLYFIN_PublishedServerUrl=$localIp \
     -p $localIp:8096:8096 \
     -p $localIp:8920:8920 `#optional` \
     -p $localIp:7359:7359/udp `#optional` \
