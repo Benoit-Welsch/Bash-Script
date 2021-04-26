@@ -57,6 +57,13 @@ function createNetwork(){
     fi
 }
 
+function contaienrDeployed(){
+    # Show message if good deployment
+    if [ ! -z "$(sudo docker ps -a --filter "name=$1" | awk 'FNR > 1 {print $1}')" ]; then
+        echo "✅ $1 container deployed"
+    fi
+}
+
 function installDns(){
     # Look for config file
     if [ ! -e "./blocky.yml" ]; then
@@ -89,9 +96,7 @@ function installDns(){
     spx01/blocky > /dev/null
     
     # Show message if good deployment
-    if [ ! -z "$(sudo docker ps -a --filter "name=blocky" | awk 'FNR > 1 {print $1}')" ]; then
-        echo "✅ Blocky container deployed"
-    fi
+    contaienrDeployed blocky
 }
 
 function installShare(){
@@ -100,11 +105,6 @@ function installShare(){
     
     # Check if container already exist
     containerExist "samba"
-    
-    # Share foler
-    lv0Share="/media/2To/lv0/"
-    mediaShare="/media/2To/media/"
-    backupShare="/media/2To/backup/"
     
     # Create share folder
     mkdir -p $lv0Share $mediaShare $backupShare
@@ -135,16 +135,14 @@ function installShare(){
     -p > /dev/null
     
     # Show message if good deployment
+    contaienrDeployed samba
     if [ ! -z "$(sudo docker ps -a --filter "name=samba" | awk 'FNR > 1 {print $1}')" ]; then
-        echo "✅ Samba container deployed"
         
         # Show password of share
         echo "📛 Credential"
-        echo ""
         echo "  - lv0    : "${lv0Passwd}
         echo "  - media  : "${mediaPasswd}
         echo "  - backup : "${backupPasswd}
-        echo ""
     fi
 }
 
@@ -176,15 +174,22 @@ function installJellyFin(){
     linuxserver/jellyfin > /dev/null
     
     # Show message if good deployment
-    if [ ! -z "$(sudo docker ps -a --filter "name=blocky" | awk 'FNR > 1 {print $1}')" ]; then
-        echo "✅ Jellyfin container deployed"
-    fi
+    contaienrDeployed jellyfin
 }
 
+function installFlood(){
+    echo 'test'
+}
+
+# Local Ip
 localIp=$(hostname -I | awk '{print $1}')
+# Share foler
+lv0Share="/media/2To/lv0/"
+mediaShare="/media/2To/media/"
+backupShare="/media/2To/backup/"
 
 # installDependency
 # checkDependency
 # installDns
 # installShare
-# installJellyFin
+installJellyFin
