@@ -7,7 +7,6 @@ blocking:
     ads:
       - https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt
       - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
-    special:
       - https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts
       - https://gist.githubusercontent.com/Benoit-Welsch/64baf2e8b1fceaca91e3f19d7b5780c8/raw/64a18d5682e32717fb0c1b3c3b26e8af99f4b3f8/gistfile1.txt
   clientGroupsBlock:
