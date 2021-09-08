@@ -1,4 +1,4 @@
-# Auto-dl-playlist
+# Ddns-whitelist
 
 A simple script to whitelist ip resolved from a domain.
 
