@@ -2,6 +2,10 @@
 
 A simple script to download video from a playlist. 
 
+# How it works
+The script reads a file that contains a list of playlists and downloads all the videos from them. <br>
+Then, the script saves the id of all the downloaded videos in a file to avoid re-downloading the videos several times.
+
 # Dependency
 - [youtube-dl](https://github.com/ytdl-org/youtube-dl/) 
 - [ffmpeg](https://github.com/FFmpeg/FFmpeg)

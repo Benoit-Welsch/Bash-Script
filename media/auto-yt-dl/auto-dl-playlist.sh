@@ -20,10 +20,13 @@ function showHelp() {
 }
 
 if [ ! $(which youtube-dl) ]; then
-    error "Please install sudo"
+    error "Please install youtube-dl"
     exit 3
 elif [ ! $(which ffmpeg) ]; then
     error "Please install ffmpeg"
+    exit 3
+elif [ ! $(which column) ]; then
+    error "Please install column"
     exit 3
 fi
 
