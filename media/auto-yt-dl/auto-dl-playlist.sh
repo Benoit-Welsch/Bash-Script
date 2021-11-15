@@ -71,6 +71,8 @@ for url in `sed '/^$/d' $playlist`; do
             -o "${output}/%(playlist_title)s/%(title)s.%(ext)s" \
             --download-archive "${output}/archive.txt" \
             --merge-output-format mp4 \
+            --embed-thumbnail \
+            --add-metadata \
             --ignore-errors \
             --no-overwrites \
             --continue \
