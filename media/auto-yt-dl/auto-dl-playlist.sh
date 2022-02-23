@@ -20,11 +20,8 @@ function showHelp() {
     exit 0
 }
 
-if [ ! $(which youtube-dl) ]; then
-    error "Please install youtube-dl"
-    exit 3
-elif [ ! $(which ffmpeg) ]; then
-    error "Please install ffmpeg"
+if [ ! $(which docker) ]; then
+    error "Please docker"
     exit 3
 elif [ ! $(which column) ]; then
     error "Please install bsdmainutils (debian, ubuntu, ...) or util-linux (fedora, archlinux, alpine, ...)"
@@ -63,18 +60,20 @@ elif [ -z "$output" ]; then
     exit 1
 fi
 
-mkdir -p "${output}/log"
-
-for url in `sed '/^$/d' $playlist`; do
-    youtube-dl \
-            -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio" \
-            -o "${output}/%(playlist_title)s/%(title)s.%(ext)s" \
-            --download-archive "${output}/archive.txt" \
-            --merge-output-format mp4 \
-            --embed-thumbnail \
-            --add-metadata \
-            --ignore-errors \
-            --no-overwrites \
-            --continue \
-            "$url" >>"${output}/log/$(date +"%y-%m-%d_%H:%M").txt" 2>&1
+for url in $(sed '/^$/d' $playlist); do
+    docker run \
+    --rm \
+    -u 1010:1012 \
+    -v ${output}:/media:rw \
+    lv00/yt-dlp \
+    -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio" \
+    -o "/media/%(playlist_title)s/%(title)s.%(ext)s" \
+    --download-archive "/media/archive.txt" \
+    --merge-output-format mp4 \
+    --embed-thumbnail \
+    --add-metadata \
+    --ignore-errors \
+    --no-overwrites \
+    --continue \
+    "$url"
 done
