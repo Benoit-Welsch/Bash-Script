@@ -1,4 +1,4 @@
-From python:alpine
+FROM python:alpine
 
 RUN apk add ffmpeg yt-dlp
 
