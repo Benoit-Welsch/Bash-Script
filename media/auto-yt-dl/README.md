@@ -1,37 +1,49 @@
-# Auto-dl-playlist 🤖
+# 💾 Auto-dl-playlist
 
-A simple script to download video from a playlist.
+# 🛈 Info
 
-# 🎓 How it works 
-
-The script reads your url(s) playlists from a file and downloads all the videos from them. <br>
-Then, the script saves the id of all the downloaded videos to avoid re-downloading the videos several times.
-
-# 🔧 Dependency 
-
-- [docker](https://docs.docker.com/get-docker/)
-- [column](https://command-not-found.com/column) (only used to show the help 😗)
-
-# 🛈 Info 
-
+- A simple script to download video from a playlist.
 - Download file in the highest quality possible and merge it to a mp4.
 - Use crontab to automate the download
 
+# 🎓 How it works
+
+- The script reads your url(s) playlists from a file and downloads all the videos from them. <br>
+- Then, the script saves the id of all the downloaded videos to avoid re-downloading the videos several times.
+
+# 🔗 Dependency
+
+- [Docker](https://docs.docker.com/get-docker/)
+
 # 👷 How to use
 
+```bash
+# Run container
+$ docker run --rm -d \
+  -v /media:/media \ # Default location of download
+  lv00/auto-yt-dl
 ```
-$ chmod +x ./auto-dl-playlist.sh
-$ ./auto-dl-playlist.sh --playlist YT/playlist.txt --output YT/
 
-$ ./auto-dl-playlist.sh --help
-    Usage:      ./auto-dl-playlist.sh  [options] ...
-    Example:    ./auto-dl-playlist.sh --playlist YT/playlist.txt --output YT/
-
-    Option              Meaning
-    --playlist    -p    Define the location of the playlist text file
-    --output      -o    Define the output folder
-    --user        -u    Define the uid:gid to use
-    --help        -h    Show this help
+```bash
+# Run container with args
+$ docker run --rm -d \
+  -v /path/to/media:/data \
+  lv00/auto-yt-dl \
+  --playlist /data/pl.txt \
+  --output /data/yt
 ```
+
+```bash
+# Cron job example
+0 0 * * * root docker run --rm -d -v /data/tankT/media/YT:/media lv00/auto-yt-dl
+```
+
+# 🔧 Args
+
+| Options    | Short | Meaning                                       | Default             |
+| ---------- | ----- | --------------------------------------------- | ------------------- |
+| --playlist | -p    | Define the location of the playlist text file | /media/playlist.txt |
+| --output   | -o    | Define the output folder                      | /media              |
+| --help     | -h    | Show help                                     |                     |
 
 # 💭 To-Do

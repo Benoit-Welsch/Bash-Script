@@ -8,6 +8,12 @@ function warning() {
     echo -e "\e[33m🚧 [WARN]: $1 \e[39m"
 }
 
+function checkDependency() {
+    if [ ! $(which ${1}) ]; then
+        error "Please install ${1}. ${2}" 3
+    fi
+}
+
 function showHelp() {
     column -t -s "|" <<<'
     Usage: | ./auto-dl-playlist.sh  [options] ...
@@ -19,17 +25,15 @@ function showHelp() {
     Option |  | Meaning
     --playlist | -p | Define the location of the playlist text file
     --output | -o | Define the output folder
-    --user | -u | Define the uid:gid to use
     --help | -h | Show this help
     '
     exit 0
 }
 
-if [ ! $(which docker) ]; then
-    error "Please docker" 3
-elif [ ! $(which column) ]; then
-    error "Please install bsdmainutils (debian, ubuntu, ...) or util-linux (fedora, archlinux, alpine, ...)" 3
-fi
+### Depenency test
+checkDependency yt-dlp
+checkDependency ffmpeg
+checkDependency column "bsdmainutils (debian, ubuntu, ...) or util-linux (fedora, archlinux, alpine, ...)"
 
 ### Args parsing
 
@@ -48,9 +52,6 @@ while [ $i -lt $len ]; do
     elif [ "${args[$i]}" = "--output" ] || [ "${args[$i]}" = "-o" ]; then
         let i++
         output=${args[$i]}
-    elif [ "${args[$i]}" = "--user" ] || [ "${args[$i]}" = "-u" ]; then
-        let i++
-        user=${args[$i]}
     else
         warning "${args[$i]} is not supported. It will be ignored"
     fi
@@ -61,35 +62,25 @@ done
 
 # Playlist
 if [ -z "$playlist" ]; then
-    error "No playlist specified" 1
-elif [ ! -f "$playlist" ]; then
-    error "Playlist file don't exist" 1
+    warning "No playlist specified. Default is /media/playlist.txt"
+    playlist="./playlist.txt"
+fi
+if [ ! -f "$playlist" ]; then
+    error "Playlist file don't exist. Default is /media/playlist.txt" 1
 fi
 
 # Output
 if [ -z "$output" ]; then
-    error "No output specified" 1
-elif [ ! -d "$output" ]; then
+    warning "No output specified"
+    output="./media"
+fi
+if [ ! -d "$output" ]; then
     error "Output dir don't exist" 1
 fi
 
-# User
-userDockerArgs="-u ${user}"
-if [ -z "$user" ]; then
-    warning "No user specified"
-    userDockerArgs=""
-elif [[ ! $user =~ ^[0-9]+:[0-9]+$ ]]; then
-    error "Not a valid uid:gid" 1
-fi
-
-
 # Loop over each url and start a docker container (ignore empty line)
 for url in $(sed '/^$/d' $playlist); do
-    docker run \
-    --rm \
-    $userDockerArgs \
-    -v ${output}:/media:rw \
-    lv00/yt-dlp \
+    yt-dlp \
     -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio" \
     -o "/media/%(playlist_title)s/%(title)s.%(ext)s" \
     --download-archive "/media/archive.txt" \
