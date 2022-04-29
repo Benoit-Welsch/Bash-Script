@@ -3,9 +3,10 @@
 set -e
 
 function onePool() {
-  zpool list $1
-  for disk in $(zdb -C $1 | grep -Po '(?<=[ *]path: ).+'); do
-    smartctl -t $1 $disk
+  zpool list $2 >/dev/null
+  for disk in $(zdb -C $2 | grep -Po '(?<=[ *]path: ).+'); do
+    path=$(echo $disk | cut -d "'" -f 2)
+    smartctl -t $1 $path
   done
 }
 
@@ -21,7 +22,7 @@ if ! [[ $1 = "short" || $1 = "long" ]]; then
 fi
 
 if [[ -n $2 ]]; then
-  onePool $2
+  onePool $1 $2
 else
   allDrive $1
 fi
