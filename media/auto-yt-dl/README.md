@@ -1,42 +1,54 @@
-# Auto-dl-playlist
+# 💾 Auto-dl-playlist
 
-A simple script to download video from a playlist.
+# 🛈 Info
 
-# How it works
-
-The script reads a file that contains a list of playlists and downloads all the videos from them. <br>
-Then, the script saves the id of all the downloaded videos in a file to avoid re-downloading the videos several times.
-
-# Dependency
-
-- [youtube-dl](https://github.com/ytdl-org/youtube-dl/)
-- [ffmpeg](https://github.com/FFmpeg/FFmpeg)
-- [column](https://command-not-found.com/column) (not installed by default on alpine 🤷‍♂️)
-
-# Info
-
-- Download file in the highest quality possible (.mp4)
-- Don't support empty line in the playlist file. (So be sure to remove any empty line or the script will fail)
-- All log are written in a log folder inside the output folder.
+- A simple script to download video from a playlist.
+- Download file in the highest quality possible and merge it to a mp4.
 - Use crontab to automate the download
 
-# How to use
+# 🎓 How it works
 
+- The script reads your url(s) playlists from a file and downloads all the videos from them. <br>
+- Then, the script saves the id of all the downloaded videos to avoid re-downloading the videos several times.
+
+# 🔗 Dependency
+
+- [Docker](https://docs.docker.com/get-docker/)
+
+# 👷 How to use
+
+```bash
+# build image
+$ docker build -t lv00/auto-yt-dl .
 ```
-$ chmod +x ./auto-dl-playlist.sh
-$ ./auto-dl-playlist.sh --playlist YT/playlist.txt --output YT/
 
-$ ./auto-dl-playlist.sh --help
-    Usage:      ./auto-dl-playlist.sh  [options] ...
-
-    Exemple:    ./auto-dl-playlist.sh --playlist YT/playlist.txt --output YT/
-
-    Option              Meaning
-    --playlist    -p    Define the location of the playlist text file
-    --output      -o    Define the output folder
-    --help        -h    Show this help
+```bash
+# Run container
+$ docker run --rm -d \
+  -v /media:/media \ # Default location of download
+  lv00/auto-yt-dl
 ```
 
-# To-Do
+```bash
+# Run container with args
+$ docker run --rm -d \
+  -v /path/to/media:/data \
+  lv00/auto-yt-dl \
+  --playlist /data/pl.txt \
+  --output /data/yt
+```
 
-- Args to specify log output
+```bash
+# Cron job example
+0 0 * * * root docker run --rm -d -v /data/tankT/media/YT:/media lv00/auto-yt-dl
+```
+
+# 🔧 Args
+
+| Options    | Short | Meaning                                       | Default             |
+| ---------- | ----- | --------------------------------------------- | ------------------- |
+| --playlist | -p    | Define the location of the playlist text file | /media/playlist.txt |
+| --output   | -o    | Define the output folder                      | /media              |
+| --help     | -h    | Show help                                     |                     |
+
+# 💭 To-Do

@@ -1,7 +1,11 @@
-From python:alpine
+FROM lv00/yt-dlp
 
-RUN apk add ffmpeg yt-dlp
+RUN apk add util-linux bash
 
-WORKDIR /media
+COPY auto-yt-dl.sh /usr/bin/start.sh
 
-ENTRYPOINT ["yt-dlp"]
+WORKDIR /data
+
+RUN chmod +x /usr/bin/start.sh
+
+ENTRYPOINT ["/usr/bin/start.sh"]

@@ -1,13 +1,23 @@
 #!/bin/bash
-
 function error() {
-    echo -e "\e[91m🤬 $1 \e[39m"
+    echo -e "\e[91m🚨 [ERR]: $1 \e[39m"
+    exit $2
+}
+
+function warning() {
+    echo -e "\e[33m🚧 [WARN]: $1 \e[39m"
+}
+
+function checkDependency() {
+    if [ ! $(which ${1}) ]; then
+        error "Please install ${1}. ${2}" 3
+    fi
 }
 
 function showHelp() {
     column -t -s "|" <<<'
     Usage: | ./auto-dl-playlist.sh  [options] ...
-    Exemple: | ./auto-dl-playlist.sh --playlist YT/playlist.txt --output YT/'
+    Example: | ./auto-dl-playlist.sh --playlist YT/playlist.txt --output YT/'
 
     echo ""
 
@@ -20,15 +30,13 @@ function showHelp() {
     exit 0
 }
 
-if [ ! $(which docker) ]; then
-    error "Please docker"
-    exit 3
-elif [ ! $(which column) ]; then
-    error "Please install bsdmainutils (debian, ubuntu, ...) or util-linux (fedora, archlinux, alpine, ...)"
-    exit 3
-fi
+### Depenency test
+checkDependency yt-dlp
+checkDependency ffmpeg
+checkDependency column "bsdmainutils (debian, ubuntu, ...) or util-linux (fedora, archlinux, alpine, ...)"
 
 ### Args parsing
+
 # Make an array populated with the args
 args=("$@")
 # Lenght of array
@@ -45,30 +53,37 @@ while [ $i -lt $len ]; do
         let i++
         output=${args[$i]}
     else
-        error "${args[$i]} is not supported"
-        exit 3
+        warning "${args[$i]} is not supported. It will be ignored"
     fi
     let i++
 done
 
-# Var check
+### Var check
+
+# Playlist
 if [ -z "$playlist" ]; then
-    error "No playlist specified"
-    exit 1
-elif [ -z "$output" ]; then
-    error "No output specified"
-    exit 1
+    warning "No playlist specified. Default is /data/playlist.txt"
+    playlist="./playlist.txt"
+fi
+if [ ! -f "$playlist" ]; then
+    error "Playlist file doesn't exist. Default is /data/playlist.txt" 1
 fi
 
+# Output
+if [ -z "$output" ]; then
+    warning "No output specified"
+    output="/data"
+fi
+if [ ! -d "$output" ]; then
+    error "Output dir doesn't exist" 1
+fi
+
+# Loop over each url and start a docker container (ignore empty line)
 for url in $(sed '/^$/d' $playlist); do
-    docker run \
-    --rm \
-    -u 1010:1012 \
-    -v ${output}:/media:rw \
-    lv00/yt-dlp \
+    yt-dlp \
     -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio" \
-    -o "/media/%(playlist_title)s/%(title)s.%(ext)s" \
-    --download-archive "/media/archive.txt" \
+    -o "${output}/%(playlist_title)s/%(title)s.%(ext)s" \
+    --download-archive "/data/archive.txt" \
     --merge-output-format mp4 \
     --embed-thumbnail \
     --add-metadata \
