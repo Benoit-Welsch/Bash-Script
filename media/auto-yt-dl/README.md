@@ -18,6 +18,11 @@
 # 👷 How to use
 
 ```bash
+# build image
+$ docker build -t lv00/auto-yt-dl .
+```
+
+```bash
 # Run container
 $ docker run --rm -d \
   -v /media:/media \ # Default location of download

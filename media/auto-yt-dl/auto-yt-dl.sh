@@ -62,28 +62,28 @@ done
 
 # Playlist
 if [ -z "$playlist" ]; then
-    warning "No playlist specified. Default is /media/playlist.txt"
+    warning "No playlist specified. Default is /data/playlist.txt"
     playlist="./playlist.txt"
 fi
 if [ ! -f "$playlist" ]; then
-    error "Playlist file don't exist. Default is /media/playlist.txt" 1
+    error "Playlist file doesn't exist. Default is /data/playlist.txt" 1
 fi
 
 # Output
 if [ -z "$output" ]; then
     warning "No output specified"
-    output="./media"
+    output="/data"
 fi
 if [ ! -d "$output" ]; then
-    error "Output dir don't exist" 1
+    error "Output dir doesn't exist" 1
 fi
 
 # Loop over each url and start a docker container (ignore empty line)
 for url in $(sed '/^$/d' $playlist); do
     yt-dlp \
     -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio" \
-    -o "/media/%(playlist_title)s/%(title)s.%(ext)s" \
-    --download-archive "/media/archive.txt" \
+    -o "${output}/%(playlist_title)s/%(title)s.%(ext)s" \
+    --download-archive "/data/archive.txt" \
     --merge-output-format mp4 \
     --embed-thumbnail \
     --add-metadata \
