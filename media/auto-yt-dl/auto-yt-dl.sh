@@ -63,7 +63,7 @@ done
 # Playlist
 if [ -z "$playlist" ]; then
     warning "No playlist specified. Default is /data/playlist.txt"
-    playlist="./playlist.txt"
+    playlist="/data/playlist.txt"
 fi
 if [ ! -f "$playlist" ]; then
     error "Playlist file doesn't exist. Default is /data/playlist.txt" 1
@@ -83,7 +83,7 @@ for url in $(sed '/^$/d' $playlist); do
     yt-dlp \
     -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio" \
     -o "${output}/%(playlist_title)s/%(title)s.%(ext)s" \
-    --download-archive "/data/archive.txt" \
+    --download-archive "${output}/archive.txt" \
     --merge-output-format mp4 \
     --embed-thumbnail \
     --add-metadata \
