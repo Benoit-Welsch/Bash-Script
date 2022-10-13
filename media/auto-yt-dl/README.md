@@ -25,14 +25,14 @@ $ docker build -t lv00/auto-yt-dl .
 ```bash
 # Run container
 $ docker run --rm -d \
-  -v /media:/media \ # Default location of download
+  -v /data:/data \ # Default location of download
   lv00/auto-yt-dl
 ```
 
 ```bash
 # Run container with args
 $ docker run --rm -d \
-  -v /path/to/media:/data \
+  -v /path/to/data:/data \
   lv00/auto-yt-dl \
   --playlist /data/pl.txt \
   --output /data/yt
@@ -40,15 +40,15 @@ $ docker run --rm -d \
 
 ```bash
 # Cron job example
-0 0 * * * root docker run --rm -d -v /data/tankT/media/YT:/media lv00/auto-yt-dl
+0 0 * * * root docker run --rm -d -v /data/tankT/media/YT:/data lv00/auto-yt-dl
 ```
 
 # 🔧 Args
 
 | Options    | Short | Meaning                                       | Default             |
 | ---------- | ----- | --------------------------------------------- | ------------------- |
-| --playlist | -p    | Define the location of the playlist text file | /media/playlist.txt |
-| --output   | -o    | Define the output folder                      | /media              |
+| --playlist | -p    | Define the location of the playlist text file | /data/playlist.txt  |
+| --output   | -o    | Define the output folder                      | /data               |
 | --help     | -h    | Show help                                     |                     |
 
 # 💭 To-Do
