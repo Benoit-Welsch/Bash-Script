@@ -20,8 +20,8 @@ Create a .env file with your db credentials (--env-file) or pass them directly t
 | PGDB       | \*\*\*         | ( backup all db )          |
 
 ```bash
-docker pull lv00/pg_dump
-docker run -it --rm -v pg_dump:/data --env-file .env lv00/pg_dump
+docker pull lv00/backup_postgres
+docker run -it --rm -v pg_dump:/data --env-file .env lv00/backup_postgres
 ```
 
 # To-Do
