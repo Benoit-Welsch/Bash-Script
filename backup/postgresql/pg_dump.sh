@@ -13,7 +13,11 @@ for t in ${env[@]}; do
   fi
 done
 
+if [ "$PGDB" == "***"]; do
+  PGDB=$(psql -c "SELECT datname FROM pg_database WHERE datistemplate = false;" --csv | awk '(NR>1)')
+fi
+
 for db in $(echo $PGDB | tr ";" "\n"); do
-  mkdir -p /data/$db/
-  /usr/bin/pg_dump -Fc $db | gzip > /data/$db/$(date +%d-%m-%y).gz
-done
+    mkdir -p /data/$db/
+    /usr/bin/pg_dump -Fc $db | gzip > /data/$db/$(date +%d-%m-%y).gz
+  done
