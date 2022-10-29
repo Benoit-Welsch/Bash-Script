@@ -10,13 +10,14 @@ A simple script to backup your PostGreSQL database
 
 Create a .env file with your db credentials (--env-file) or pass them directly to docker (-e)
 
-| env        |                |
-| ---------- | -------------- |
-| PGHOST     | 127.0.01       |
-| PGUSER     | root           |
-| PGPASSWORD | root           |
-| PGPORT     | 5432           |
-| PGDB       | db_1;db_2;db_3 |
+| env        |                |                            |
+| ---------- | -------------- | -------------------------- |
+| PGHOST     | postgresql     |                            |
+| PGUSER     | root           |                            |
+| PGPASSWORD | root           |                            |
+| PGPORT     | 5432           |                            |
+| PGDB       | db_1;db_2;db_3 | ( backup selected db only) |
+| PGDB       | \*\*\*         | ( backup all db )          |
 
 ```bash
 docker pull lv00/pg_dump
