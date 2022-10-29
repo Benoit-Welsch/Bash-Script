@@ -4,6 +4,7 @@ function error() {
   exit 1
 }
 
+# Env var to check
 env=("PGHOST" "PGUSER" "PGPASSWORD" "PGPORT" "PGDB")
 
 # Check env
@@ -13,7 +14,17 @@ for t in ${env[@]}; do
   fi
 done
 
+if [ "$PGDB" == "***" ]; then
+  # Query all db and ignore template
+  PGDB=$(psql -c "SELECT datname FROM pg_database WHERE datistemplate = false;" --csv | awk '(NR>1)')
+fi
+
 for db in $(echo $PGDB | tr ";" "\n"); do
-  mkdir -p /data/$db/
-  /usr/bin/pg_dump -Fc $db | gzip > /data/$db/$(date +%d-%m-%y).gz
+    # Create dir (does nothing if exist)
+    mkdir -p /data/$db/ 
+    # Create backup and store it in archive 
+    /usr/bin/pg_dump -Fc $db | gzip > /data/$db/$(date +%d-%m-%y).gz
+    # Change permission
+    chmod 770 /data/$db/
+    chmod 770 /data/$db/$(date +%d-%m-%y).gz
 done
